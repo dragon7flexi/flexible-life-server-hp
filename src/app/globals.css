@@ -3,6 +3,3 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  @apply h-full w-full m-0 bg-slate-900; /* Tailwindのクラスを適用 */
-}
