@@ -1,6 +1,5 @@
 "use client";
 
-import { img } from "framer-motion/client";
 import { useEffect, useRef } from "react";
 
 const imgs = [
@@ -43,7 +42,6 @@ export default function Home() {
     currBg.current.style.backgroundImage = `url(${imgs[currIdx]})`;
 
     nextBg.current.style.backgroundImage = `url(${imgs[nextIdx]})`;
-    nextBg.current.style.opacity = "0";
 
     currMsg.current.innerText = msgs[currIdx];
 
@@ -106,34 +104,20 @@ export default function Home() {
 
       currBgAnimation?.addEventListener("finish", () => {
         currImgIdx = (currImgIdx + 1) % msgs.length;
-
-        if (currBg.current) {
-          currBg.current.style.opacity = "0";
-          currBg.current.style.backgroundImage = `url(${imgs[currImgIdx]})`;
-          currBg.current.style.opacity = "1";
-        }
-      });
-
-      const nextBgAnimation = nextBg.current?.animate(
-        [
-          { opacity: 0 },
-          { opacity: 1 }
-        ],
-        {
-          duration: 1000,
-          easing: "ease-out"
-        }
-      );
-
-      nextBgAnimation?.addEventListener("finish", () => {
         nextImgIdx = (nextImgIdx + 1) % imgs.length;
 
-        if (nextBg.current) {
-          nextBg.current.style.opacity = "1";
+        if (currBg.current && nextBg.current) {
+          currBg.current.style.opacity = "0";
+
+          currBg.current.style.backgroundImage = `url(${imgs[currImgIdx]})`;
+          currBg.current.style.opacity = "1";
+
           nextBg.current.style.backgroundImage = `url(${imgs[nextImgIdx]})`;
-          nextBg.current.style.opacity = "0"
+          nextBg.current.style.opacity = "1"
         }
       });
+
+
     }
 
     currMsg.current?.animate(
@@ -146,8 +130,6 @@ export default function Home() {
         easing: "ease",
       }
     );
-
-    
 
     setInterval(() => {
       animate()
@@ -166,7 +148,7 @@ export default function Home() {
       </div>
 
       <div className="fixed w-full h-full bg-cover bg-center -z-10" ref={currBg}></div>
-      <div className="fixed w-full h-full bg-cover bg-center -z-10" ref={nextBg}></div>
+      <div className="fixed w-full h-full bg-cover bg-center -z-20" ref={nextBg}></div>
     </div>
   );
 }
