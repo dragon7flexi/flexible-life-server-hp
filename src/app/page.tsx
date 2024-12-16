@@ -1,13 +1,14 @@
 "use client";
 
+import { img } from "framer-motion/client";
 import { useEffect, useRef } from "react";
 
 const imgs = [
-    "tobigaya_lava.jpg",
     "main_world_spawn2.png",
     "tobigaya.jpg",
     "5th_world_day.png",
     "rainbow_road.png",
+    "tobigaya_lava.jpg",
 ];
 
 imgs.forEach((name, idx, arr) => {
@@ -34,10 +35,17 @@ export default function Home() {
     let currIdx = 0;
     let nextIdx = 1;
 
+    let currImgIdx = 0;
+    let nextImgIdx = 1;
+
     if (!currBg.current || !nextBg.current || !currMsg.current || !nextMsg.current) return;
 
+    currBg.current.style.backgroundImage = `url(${imgs[currIdx]})`;
+
+    nextBg.current.style.backgroundImage = `url(${imgs[nextIdx]})`;
+    nextBg.current.style.opacity = "0";
+
     currMsg.current.innerText = msgs[currIdx];
-    currMsg.current.style.opacity = "1"
 
     nextMsg.current.innerText = msgs[nextIdx];
     nextMsg.current.style.opacity = "0";
@@ -46,7 +54,7 @@ export default function Home() {
       const currMsgAnimation = currMsg.current?.animate(
         [
           { opacity: 1, transform: "translateY(0)" },
-          { opacity: 0, transform: "translateY(80px)" }
+          { opacity: 0, transform: "translateY(50px)" }
         ],
         {
           duration: 1000,
@@ -66,7 +74,7 @@ export default function Home() {
 
       const nextMsgAnimation = nextMsg.current?.animate(
         [
-          { opacity: 0, transform: "translateY(-50px)" },
+          { opacity: 0, transform: "translateY(-80px)" },
           { opacity: 1, transform: "translateY(0)" }
         ],
         {
@@ -84,7 +92,62 @@ export default function Home() {
           nextMsg.current.style.opacity = "0";
         }
       });
+
+      const currBgAnimation = currBg.current?.animate(
+        [
+          { opacity: 1 },
+          { opacity: 0 }
+        ],
+        {
+          duration: 1000,
+          easing: "ease"
+        }
+      );
+
+      currBgAnimation?.addEventListener("finish", () => {
+        currImgIdx = (currImgIdx + 1) % msgs.length;
+
+        if (currBg.current) {
+          currBg.current.style.opacity = "0";
+          currBg.current.style.backgroundImage = `url(${imgs[currImgIdx]})`;
+          currBg.current.style.opacity = "1";
+        }
+      });
+
+      const nextBgAnimation = nextBg.current?.animate(
+        [
+          { opacity: 0 },
+          { opacity: 1 }
+        ],
+        {
+          duration: 1000,
+          easing: "ease-out"
+        }
+      );
+
+      nextBgAnimation?.addEventListener("finish", () => {
+        nextImgIdx = (nextImgIdx + 1) % imgs.length;
+
+        if (nextBg.current) {
+          nextBg.current.style.opacity = "1";
+          nextBg.current.style.backgroundImage = `url(${imgs[nextImgIdx]})`;
+          nextBg.current.style.opacity = "0"
+        }
+      });
     }
+
+    currMsg.current?.animate(
+      [
+        { opacity: 0, transform: "translateY(-50px)" },
+        { opacity: 1, transform: "translateY(0)" }
+      ],
+      {
+        duration: 1000,
+        easing: "ease",
+      }
+    );
+
+    
 
     setInterval(() => {
       animate()
@@ -92,7 +155,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="font-serif">
+    <div className="font-serif text-white">
       <div className="fixed w-full h-[50%] flex items-center justify-center text-7xl">
         <p ref={currMsg} className="fixed">curr</p>
         <p ref={nextMsg} className="fixed">next</p>
@@ -102,8 +165,8 @@ export default function Home() {
         <button>参加する</button>
       </div>
 
-      <div className="fixed w-full h-full" ref={currBg}></div>
-      <div className="fixed w-full h-full" ref={nextBg}></div>
+      <div className="fixed w-full h-full bg-cover bg-center -z-10" ref={currBg}></div>
+      <div className="fixed w-full h-full bg-cover bg-center -z-10" ref={nextBg}></div>
     </div>
   );
 }
